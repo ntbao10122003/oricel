@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Carousel, Row, Col, Card, Button, Modal, message, InputNumber, Form, Input, List } from 'antd';
+import { Carousel, Row, Col, Card, Button, Modal, message, InputNumber, Form, Input, List,Tag  } from 'antd';
 import axios from 'axios';
 
 const formatPrice = (price) => {
@@ -10,7 +10,7 @@ function ClientHome() {
   const [banners, setBanners] = useState([]);
   const [products, setProducts] = useState([]);
   const [orderQuantities, setOrderQuantities] = useState({});
-  const [cart, setCart] = useState([]); // giỏ hàng là mảng sản phẩm {product, quantity}
+  const [cart, setCart] = useState([]); 
   const [isCartVisible, setIsCartVisible] = useState(false);
   const [isOrderModalVisible, setIsOrderModalVisible] = useState(false);
   const [form] = Form.useForm();
@@ -111,36 +111,54 @@ function ClientHome() {
 
       <h2 style={{ textAlign: 'center', marginBottom: 20 }}>Sản phẩm nổi bật</h2>
       <Row gutter={[16, 16]}>
-        {products.map(p => (
-          <Col key={p.MaSanPham} xs={24} sm={12} md={6}>
-            <Card
-              hoverable
-              cover={<img src={p.HinhAnh} alt={p.TenSanPham} style={{ height: 200, objectFit: 'cover', borderRadius: 4 }} />}
-            >
-              <Card.Meta title={p.TenSanPham} description={`Giá: ${formatPrice(p.GiaBan)}`} />
-              <p><strong>Thương hiệu:</strong> {p.ThuongHieu}</p>
-              <p><strong>Loại sản phẩm:</strong> {p.LoaiSanPham}</p>
-              <p>{p.MoTa}</p>
-              <p><strong>Số lượng tồn:</strong> {p.SoLuongTon}</p>
-              <InputNumber
-                min={1}
-                max={p.SoLuongTon}
-                value={orderQuantities[p.MaSanPham] || 1}
-                onChange={(value) => handleQuantityChange(p.MaSanPham, value)}
-                style={{ width: '100%', marginBottom: 8 }}
-              />
-              <Button
-                type="primary"
-                block
-                onClick={() => addToCart(p)}
-                disabled={p.SoLuongTon <= 0}
-              >
-                Thêm vào giỏ
-              </Button>
-            </Card>
-          </Col>
-        ))}
-      </Row>
+  {products.map(p => (
+    <Col key={p.MaSanPham} xs={24} sm={12} md={6}>
+      <Card
+        hoverable
+        style={{ borderRadius: 12, boxShadow: '0 2px 10px rgba(0,0,0,0.1)' }}
+        cover={
+          <img
+            src={p.HinhAnh}
+            alt={p.TenSanPham}
+            style={{
+              height: 220,
+              objectFit: 'cover',
+              borderTopLeftRadius: 12,
+              borderTopRightRadius: 12
+            }}
+          />
+        }
+      >
+        <h3 style={{ fontWeight: 600, fontSize: 16 }}>{p.TenSanPham}</h3>
+        <p style={{ color: '#cf1322', fontWeight: 'bold', fontSize: 15, margin: '8px 0' }}>
+          {formatPrice(p.GiaBan)}
+        </p>
+        <p style={{ marginBottom: 4 }}><strong>Thương hiệu:</strong> {p.ThuongHieu}</p>
+        <p style={{ marginBottom: 4 }}><strong>Loại:</strong> {p.LoaiSanPham}</p>
+        <p style={{ fontSize: 13, color: '#555', height: 40, overflow: 'hidden' }}>{p.MoTa}</p>
+        <p style={{ fontSize: 13, marginBottom: 8 }}>
+          <strong>Số lượng:</strong> {p.SoLuongTon}
+        </p>
+        <InputNumber
+          min={1}
+          max={p.SoLuongTon}
+          value={orderQuantities[p.MaSanPham] || 1}
+          onChange={(value) => handleQuantityChange(p.MaSanPham, value)}
+          style={{ width: '100%', marginBottom: 10 }}
+        />
+        <Button
+          type="primary"
+          block
+          size="large"
+          onClick={() => addToCart(p)}
+          disabled={p.SoLuongTon <= 0}
+        >
+          Thêm vào giỏ hàng
+        </Button>
+      </Card>
+    </Col>
+  ))}
+</Row>
 
       <Button
         type="primary"

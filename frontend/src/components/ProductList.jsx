@@ -54,25 +54,32 @@ function ProductList() {
         setIsModalOpen(true);
       }}>Thêm sản phẩm</Button>
 
-      <Table dataSource={products} rowKey="id" style={{ marginTop: 20 }}>
-        <Table.Column title="Hình ảnh" dataIndex="HinhAnh" render={url => <img src={url} alt="" style={{ width: 50 }} />} />
-        <Table.Column title="Mã sản phẩm" dataIndex="MaSanPham" />
-        <Table.Column title="Tên sản phẩm" dataIndex="TenSanPham" />
-        <Table.Column title="Thương hiệu" dataIndex="ThuongHieu" />
-        <Table.Column title="Loại sản phẩm" dataIndex="LoaiSanPham" />
-        <Table.Column title="Giá bán" dataIndex="GiaBan" render={price => `${price} đ`} />
-        <Table.Column title="Mô tả" dataIndex="MoTa" />
-        <Table.Column title="Số lượng tồn" dataIndex="SoLuongTon" />
-        <Table.Column
-          title="Hành động"
-          render={(record) => (
-            <>
-              <Button onClick={() => handleEdit(record)} style={{ marginRight: 8 }}>Sửa</Button>
-              <Button danger onClick={() => handleDelete(record.id)}>Xóa</Button>
-            </>
-          )}
-        />
-      </Table>
+      <Table
+  dataSource={products}
+  rowKey="id"
+  style={{ marginTop: 20 }}
+  scroll={{ x: 'max-content' }} 
+>
+  <Table.Column title="Hình ảnh" dataIndex="HinhAnh" render={url => <img src={url} alt="" style={{ width: 50 }} />} />
+  <Table.Column title="Mã sản phẩm" dataIndex="MaSanPham" responsive={['xs', 'sm', 'md', 'lg', 'xl']} />
+  <Table.Column title="Tên sản phẩm" dataIndex="TenSanPham" responsive={['xs', 'sm', 'md', 'lg', 'xl']} />
+  <Table.Column title="Thương hiệu" dataIndex="ThuongHieu" responsive={['sm', 'md', 'lg', 'xl']} />
+  <Table.Column title="Loại sản phẩm" dataIndex="LoaiSanPham" responsive={['md', 'lg', 'xl']} />
+  <Table.Column title="Giá bán" dataIndex="GiaBan" render={price => `${price} đ`} responsive={['xs', 'sm', 'md', 'lg', 'xl']} />
+  <Table.Column title="Mô tả" dataIndex="MoTa" responsive={['lg', 'xl']} />
+  <Table.Column title="Số lượng tồn" dataIndex="SoLuongTon" responsive={['sm', 'md', 'lg', 'xl']} />
+  <Table.Column
+    title="Hành động"
+    render={(record) => (
+      <>
+        <Button onClick={() => handleEdit(record)} style={{ marginRight: 8 }}>Sửa</Button>
+        <Button danger onClick={() => handleDelete(record.id)}>Xóa</Button>
+      </>
+    )}
+    fixed="right"
+  />
+</Table>
+
 
       <Modal
         title={editProduct ? 'Chỉnh sửa sản phẩm' : 'Thêm sản phẩm mới'}
