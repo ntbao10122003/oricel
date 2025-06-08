@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Table, Button, Modal, Form, Input, InputNumber } from 'antd';
+import { Table, Button, Modal, Form, Input, InputNumber, Space, Popconfirm } from 'antd';
 import axios from 'axios';
 
 function ProductList() {
@@ -55,69 +55,172 @@ function ProductList() {
       }}>Thêm sản phẩm</Button>
 
       <Table
-  dataSource={products}
-  rowKey="id"
-  style={{ marginTop: 20 }}
-  scroll={{ x: 'max-content' }} 
->
-  <Table.Column title="Hình ảnh" dataIndex="HinhAnh" render={url => <img src={url} alt="" style={{ width: 50 }} />} />
-  <Table.Column title="Mã sản phẩm" dataIndex="MaSanPham" responsive={['xs', 'sm', 'md', 'lg', 'xl']} />
-  <Table.Column title="Tên sản phẩm" dataIndex="TenSanPham" responsive={['xs', 'sm', 'md', 'lg', 'xl']} />
-  <Table.Column title="Thương hiệu" dataIndex="ThuongHieu" responsive={['sm', 'md', 'lg', 'xl']} />
-  <Table.Column title="Loại sản phẩm" dataIndex="LoaiSanPham" responsive={['md', 'lg', 'xl']} />
-  <Table.Column title="Giá bán" dataIndex="GiaBan" render={price => `${price} đ`} responsive={['xs', 'sm', 'md', 'lg', 'xl']} />
-  <Table.Column title="Mô tả" dataIndex="MoTa" responsive={['lg', 'xl']} />
-  <Table.Column title="Số lượng tồn" dataIndex="SoLuongTon" responsive={['sm', 'md', 'lg', 'xl']} />
-  <Table.Column
-    title="Hành động"
-    render={(record) => (
-      <>
-        <Button onClick={() => handleEdit(record)} style={{ marginRight: 8 }}>Sửa</Button>
-        <Button danger onClick={() => handleDelete(record.id)}>Xóa</Button>
-      </>
-    )}
-    fixed="right"
-  />
-</Table>
-
+        columns={[
+          {
+            title: 'ID',
+            dataIndex: 'ID',
+            key: 'ID',
+          },
+          {
+            title: 'Hình ảnh',
+            dataIndex: 'HINHANH',
+            key: 'HINHANH',
+            render: (text) => (
+              <img src={text} alt="Product" style={{ width: 50, height: 50 }} />
+            )
+          },
+          {
+            title: 'Mã sản phẩm',
+            dataIndex: 'MASANPHAM',
+            key: 'MASANPHAM',
+          },
+          {
+            title: 'Tên sản phẩm',
+            dataIndex: 'TENSANPHAM',
+            key: 'TENSANPHAM',
+          },
+          {
+            title: 'Thương hiệu',
+            dataIndex: 'THUONGHIEU',
+            key: 'THUONGHIEU',
+          },
+          {
+            title: 'Loại sản phẩm',
+            dataIndex: 'LOAISANPHAM',
+            key: 'LOAISANPHAM',
+          },
+          {
+            title: 'Giá bán',
+            dataIndex: 'GIABAN',
+            key: 'GIABAN',
+            render: (text) => new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(text)
+          },
+          {
+            title: 'Mô tả',
+            dataIndex: 'MOTA',
+            key: 'MOTA',
+            render: (text) => {
+              if (typeof text === 'object') {
+                return JSON.stringify(text);
+              }
+              if (text && typeof text === 'string') {
+                try {
+                  const parsed = JSON.parse(text);
+                  return JSON.stringify(parsed);
+                } catch {
+                  return text;
+                }
+              }
+              return text;
+            }
+          },
+          {
+            title: 'Số lượng tồn',
+            dataIndex: 'SOLUONGTON',
+            key: 'SOLUONGTON',
+          },
+          {
+            title: 'Hành động',
+            key: 'action',
+            render: (_, record) => (
+              <Space size="middle">
+                <Button type="primary" onClick={() => handleEdit(record)}>Sửa</Button>
+                <Popconfirm
+                  title="Bạn có chắc muốn xóa sản phẩm này?"
+                  onConfirm={() => handleDelete(record.ID)}
+                  okText="Có"
+                  cancelText="Không"
+                >
+                  <Button type="danger">Xóa</Button>
+                </Popconfirm>
+              </Space>
+            ),
+          },
+        ]}
+        dataSource={products}
+        rowKey="ID"
+        pagination={{ pageSize: 10 }}
+      />
 
       <Modal
-        title={editProduct ? 'Chỉnh sửa sản phẩm' : 'Thêm sản phẩm mới'}
-        visible={isModalOpen}
+        title={editProduct ? 'Sửa sản phẩm' : 'Thêm sản phẩm'}
+        open={isModalOpen}
         onOk={handleOk}
         onCancel={() => setIsModalOpen(false)}
+        width={800}
       >
-        <Form form={form} layout="vertical">
-          <Form.Item name="HinhAnh" label="Hình ảnh URL" rules={[{ required: true, message: 'Vui lòng nhập URL ảnh' }]}>
+        <Form
+          form={form}
+          layout="vertical"
+          initialValues={editProduct || {} }
+        >
+          <Form.Item
+            name="ID"
+            label="ID"
+            hidden={true}
+          >
             <Input />
           </Form.Item>
-
-          <Form.Item name="MaSanPham" label="Mã sản phẩm" rules={[{ required: true, message: 'Vui lòng nhập mã sản phẩm' }]}>
+          <Form.Item
+            name="HINHANH"
+            label="Hình ảnh"
+            rules={[{ required: true, message: 'Vui lòng nhập URL hình ảnh' }]}
+          >
             <Input />
           </Form.Item>
-
-          <Form.Item name="TenSanPham" label="Tên sản phẩm" rules={[{ required: true, message: 'Vui lòng nhập tên sản phẩm' }]}>
+          <Form.Item
+            name="MASANPHAM"
+            label="Mã sản phẩm"
+            rules={[{ required: true, message: 'Vui lòng nhập mã sản phẩm' }]}
+          >
             <Input />
           </Form.Item>
-
-          <Form.Item name="ThuongHieu" label="Thương hiệu" rules={[{ required: true, message: 'Vui lòng nhập thương hiệu' }]}>
+          <Form.Item
+            name="TENSANPHAM"
+            label="Tên sản phẩm"
+            rules={[{ required: true, message: 'Vui lòng nhập tên sản phẩm' }]}
+          >
             <Input />
           </Form.Item>
-
-          <Form.Item name="LoaiSanPham" label="Loại sản phẩm" rules={[{ required: true, message: 'Vui lòng nhập loại sản phẩm' }]}>
+          <Form.Item
+            name="THUONGHIEU"
+            label="Thương hiệu"
+            rules={[{ required: true, message: 'Vui lòng nhập thương hiệu' }]}
+          >
             <Input />
           </Form.Item>
-
-          <Form.Item name="GiaBan" label="Giá bán" rules={[{ required: true, message: 'Vui lòng nhập giá bán' }]}>
-            <InputNumber style={{ width: '100%' }} min={0} />
+          <Form.Item
+            name="LOAISANPHAM"
+            label="Loại sản phẩm"
+            rules={[{ required: true, message: 'Vui lòng nhập loại sản phẩm' }]}
+          >
+            <Input />
           </Form.Item>
-
-          <Form.Item name="MoTa" label="Mô tả">
-            <Input.TextArea />
+          <Form.Item
+            name="GIABAN"
+            label="Giá bán"
+            rules={[{ required: true, message: 'Vui lòng nhập giá bán' }]}
+          >
+            <InputNumber min={0} />
           </Form.Item>
-
-          <Form.Item name="SoLuongTon" label="Số lượng tồn" rules={[{ required: true, message: 'Vui lòng nhập số lượng tồn' }]}>
-            <InputNumber style={{ width: '100%' }} min={0} />
+          <Form.Item
+            name="MOTA"
+            label="Mô tả"
+          >
+            <Input.TextArea 
+              onChange={(e) => {
+                const value = e.target.value;
+                form.setFieldsValue({ MOTA: value });
+              }}
+              value={form.getFieldValue('MOTA') || ''}
+            />
+          </Form.Item>
+          <Form.Item
+            name="SOLUONGTON"
+            label="Số lượng tồn"
+            rules={[{ required: true, message: 'Vui lòng nhập số lượng tồn' }]}
+          >
+            <InputNumber min={0} />
           </Form.Item>
         </Form>
       </Modal>
